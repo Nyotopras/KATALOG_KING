@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KING KAUS KAKI - Katalog Varian Motif & Ukuran</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/docx@8.2.2/build/index.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    body { user-select: none; -webkit-user-select: none; }
+    .custom-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+    @media print {
+      body * { visibility: hidden; }
+      #section-to-print, #section-to-print * { visibility: visible; }
+      #section-to-print { position: absolute; left: 0; top: 0; width: 80mm; font-size: 12px; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">
+
+  <!-- ================= PAGE 1: WELCOME SCREEN ================= -->
+  <div id="welcome-screen" class="fixed inset-0 bg-gradient-to-br from-blue-900 to-slate-900 z-50 flex flex-col items-center justify-center p-4 text-white">
+    <div class="bg-white/10 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/20 max-w-md w-full text-center space-y-6">
+      <div class="flex justify-center">
+        <img id="welcome-logo" src="img/logo.png" onerror="this.src='https://via.placeholder.com/100?text=KING'" class="w-24 h-24 object-contain rounded-2xl bg-white border-4 border-blue-400 shadow-lg mx-auto p-1">
+      </div>
+
+      <div>
+        <h1 class="text-3xl font-black uppercase tracking-wider text-amber-400">👑 KING KAUS KAKI</h1>
+        <p class="text-xs text-blue-200 mt-1">Katalog Grosir & Pilihan Varian Lusinan</p>
+      </div>
+
+      <button onclick="openCustomerModal()" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold py-4 rounded-xl shadow-lg text-lg transition flex items-center justify-center gap-2">
+        <span>🚀</span> MULAI PILIH BARANG
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= POPUP FORM: NAMA & TEMPAT (AUTOCOMPLETE) ================= -->
+  <div id="customer-modal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 relative shadow-2xl text-slate-800 space-y-4">
+      <h3 class="font-bold text-lg text-blue-900 flex items-center gap-2"><span>📝</span> Data Pemesan / Toko</h3>
+      <p class="text-xs text-slate-500">Ketik huruf pertama untuk melihat saran nama pelanggan & tempat otomatis.</p>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Nama Pemesan / Toko:</label>
+          <input type="text" id="input-customer-name" list="customer-list" oninput="autoFillAddress()" placeholder="Ketik misal: A..." class="w-full bg-slate-50 border rounded-xl px-3 py-2 text-sm focus:outline-blue-600 font-semibold uppercase">
+          <datalist id="customer-list"></datalist>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Tempat / Kota / Alamat:</label>
+          <input type="text" id="input-customer-place" list="place-list" placeholder="Ketik misal: BINJAI, PERANAP..." class="w-full bg-slate-50 border rounded-xl px-3 py-2 text-sm focus:outline-blue-600 font-semibold uppercase">
+          <datalist id="place-list"></datalist>
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="document.getElementById('customer-modal').classList.add('hidden')" class="flex-1 bg-slate-200 hover:bg-slate-300 font-bold py-2.5 rounded-xl text-xs">Batal</button>
+        <button onclick="startPosSession()" class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 rounded-xl text-xs">Masuk Katalog ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HEADER & NAVIGASI UTAMA ================= -->
+  <header class="bg-blue-900 text-white p-4 flex flex-col sm:flex-row justify-between items-center shadow-md gap-3 shrink-0">
+    <div class="flex items-center gap-3">
+      <img id="header-logo" src="img/logo.png" onerror="this.src='https://via.placeholder.com/50?text=KING'" class="w-10 h-10 object-contain rounded-xl bg-white border border-blue-400 p-0.5">
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-lg font-black uppercase tracking-wider text-amber-400">👑 KING KAUS KAKI</h1>
+          <button onclick="openCustomerModal()" class="text-[10px] bg-blue-700 hover:bg-blue-600 px-2 py-0.5 rounded text-blue-100 font-medium">✏️ <span id="display-customer-info">Atur Pemesan</span></button>
+        </div>
+        <p class="text-xs text-blue-200">Satuan Penjualan: Per Lusin (12 Pcs)</p>
+      </div>
+    </div>
+
+    <!-- TOMBOL MENU NAVIGASI ATAS -->
+    <div class="flex flex-wrap items-center gap-2">
+      <button onclick="switchTab('kasir')" id="tab-kasir" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-700 shadow transition">🛍️ Katalog</button>
+      <button onclick="switchTab('keranjang')" id="tab-keranjang" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-800 hover:bg-blue-700 transition relative">
+        🛒 Keranjang <span id="cart-badge-count" class="bg-amber-500 text-slate-900 font-black px-1.5 py-0.2 rounded-full text-[10px] ml-1">0</span>
+      </button>
+      <button onclick="switchTab('laporan')" id="tab-laporan" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-800 hover:bg-blue-700 transition">📋 Riwayat</button>
+      <button onclick="backToWelcome()" class="px-3 py-2 bg-red-600 hover:bg-red-700 text-xs font-bold rounded-lg transition" title="Menu Utama">🏠 Menu</button>
+    </div>
+  </header>
+
+  <!-- ================= TAMPILAN 1: HALAMAN KATALOG ================= -->
+  <div id="view-kasir" class="flex-1 flex flex-col">
+    <!-- BAGIAN BEST SELLER (GESER KANAN KIRI) -->
+    <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-white p-4 border-b">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-black text-xs md:text-sm uppercase tracking-wider text-amber-600 flex items-center gap-1.5">
+          <span>🔥</span> Produk Terlaris (Best Seller) — Geser Kanan
+        </h3>
+      </div>
+      <div id="best-seller-slider" class="flex gap-3 overflow-x-auto pb-2 custom-scroll whitespace-nowrap"></div>
+    </div>
+
+    <!-- KATEGORI UTAMA -->
+    <div class="bg-white p-3 shadow-sm border-b overflow-x-auto whitespace-nowrap flex gap-2 shrink-0 custom-scroll" id="category-bar"></div>
+
+    <div class="bg-white px-4 py-3 border-b flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-500">Cari:</span>
+        <input type="text" id="search-input" oninput="renderProducts()" placeholder="Contoh: FINI, KAKIBRO..." class="bg-slate-100 border rounded-lg px-3 py-1.5 font-medium text-slate-700 w-full sm:w-64 focus:outline-blue-600">
+        <button onclick="document.getElementById('search-input').value=''; renderProducts();" class="text-red-600 font-semibold hover:underline">Reset</button>
+      </div>
+      <span id="active-customer-badge" class="text-xs text-emerald-700 font-bold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 text-center">Pemesan: Umum</span>
+    </div>
+
+    <main class="flex-1 p-4 bg-slate-50">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4" id="product-grid"></div>
+    </main>
+  </div>
+
+  <!-- ================= TAMPILAN 2: HALAMAN KERANJANG TERPISAH ================= -->
+  <div id="view-keranjang" class="flex-1 p-4 sm:p-8 bg-slate-50 max-w-3xl mx-auto w-full" style="display: none;">
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col">
+      <div class="bg-slate-800 text-white p-4 sm:p-5 flex justify-between items-center">
+        <h2 class="text-base sm:text-lg font-bold flex items-center gap-2"><span>🛒</span> Rincian Daftar Pesanan (Lusin)</h2>
+        <button onclick="clearCart()" class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-semibold transition">Kosongkan</button>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-3 max-h-[50vh] overflow-y-auto custom-scroll" id="cart-items-page">
+        <p class="text-center text-slate-400 py-10 text-sm">Belum ada barang dipilih.<br>Silakan pilih produk terlebih dahulu di menu Katalog.</p>
+      </div>
+
+      <div class="p-4 sm:p-6 border-t border-slate-200 bg-slate-50 space-y-3">
+        <div class="flex justify-between text-sm text-slate-600">
+          <span>Total Jenis Barang:</span>
+          <span id="total-items-count-page" class="font-bold text-slate-900">0 Jenis</span>
+        </div>
+        <div class="flex justify-between text-base font-bold text-slate-900 border-t pt-2">
+          <span>TOTAL KUANTITAS:</span>
+          <span id="total-qty-count-page" class="text-blue-700 font-extrabold">0 Lusin</span>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2">
+          <button onclick="processOrderWA()" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+            <span>📱</span> Kirim ke WhatsApp
+          </button>
+          <button onclick="generateWordDocument()" class="bg-indigo-700 hover:bg-indigo-800 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+            <span>📄</span> Unduh Word (.docx)
+          </button>
+          <button onclick="processOrderPrint()" class="bg-blue-800 hover:bg-blue-900 active:scale-95 text-white font-bold py-3 px-4 rounded-xl shadow text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+            <span>🧾</span> Cetak Struk
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAMPILAN 3: HALAMAN RIWAYAT LAPORAN ================= -->
+  <div id="view-laporan" class="flex-1 p-6 bg-slate-50" style="display: none;">
+    <div class="max-w-6xl mx-auto space-y-6">
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <div class="flex justify-between items-center mb-4 pb-3 border-b">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">📋 Riwayat Orderan Lokal</h2>
+            <p class="text-xs text-slate-500">Daftar pesanan yang dicetak/dikirim dari perangkat ini.</p>
+          </div>
+          <button onclick="clearAllTransactions()" class="text-xs bg-red-50 text-red-600 px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-100 font-semibold">Hapus Riwayat</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 border-b">
+                <th class="p-3">No. Order</th>
+                <th class="p-3">Waktu</th>
+                <th class="p-3">Pemesan / Tempat</th>
+                <th class="p-3 text-center">Total Lusin</th>
+                <th class="p-3 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-table-body" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="bon-detail-card" class="bg-white rounded-xl shadow-md p-6" style="display: none;">
+        <div class="flex justify-between items-center mb-4 pb-3 border-b">
+          <div>
+            <h3 class="text-md font-bold text-blue-900" id="detail-bon-title">Rincian Order</h3>
+            <p class="text-xs text-slate-500" id="detail-bon-date">Waktu: -</p>
+          </div>
+          <button onclick="document.getElementById('bon-detail-card').style.display='none'" class="text-xs bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded font-semibold">Tutup</button>
+        </div>
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-blue-50 text-blue-900 border-b">
+              <th class="p-2.5">Foto Varian</th>
+              <th class="p-2.5">Nama Produk & Ukuran</th>
+              <th class="p-2.5 text-center">Jumlah (Lusin)</th>
+            </tr>
+          </thead>
+          <tbody id="detail-bon-body" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL DETAIL PRODUK ================= -->
+  <div id="product-detail-modal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center hidden p-4" onclick="closeProductModal()">
+    <div class="bg-white rounded-[2.5rem] max-w-lg w-full p-6 relative shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto custom-scroll" onclick="event.stopPropagation()">
+      <button onclick="closeProductModal()" class="absolute top-5 right-5 bg-slate-100 hover:bg-slate-200 w-9 h-9 rounded-full font-bold text-slate-700 flex items-center justify-center z-10 shadow-sm transition">✕</button>
+      
+      <div class="w-fit mx-auto bg-white p-1 rounded-[2.2rem] border-2 border-slate-200/90 shadow-sm flex items-center justify-center overflow-hidden transition-all duration-300">
+        <img id="detail-modal-img" src="" alt="Produk" class="max-h-64 w-auto object-contain rounded-[1.8rem] block transition-all duration-300">
+      </div>
+      
+      <div>
+        <span id="detail-modal-cat" class="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full font-bold">Kategori</span>
+        <h2 id="detail-modal-title" class="font-black text-xl text-slate-900 mt-2">Nama Produk</h2>
+        <p id="detail-modal-desc" class="text-xs text-slate-600 mt-1.5 leading-relaxed">Deskripsi produk...</p>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <label id="modal-section-title" class="block text-xs font-bold text-slate-700">Langkah 1: Pilih Motif</label>
+          <button id="btn-back-to-motifs" onclick="backToMotifSelection()" class="hidden text-[11px] text-blue-600 font-bold hover:underline">← Kembali Pilih Motif</button>
+        </div>
+
+        <div id="detail-modal-variants" class="max-h-56 overflow-y-auto space-y-2 pr-1 custom-scroll"></div>
+      </div>
+
+      <button onclick="saveMultipleVariantsToCart()" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-3.5 rounded-2xl shadow-lg text-sm transition flex items-center justify-center gap-2">
+        <span>🛒</span> SIMPAN KE KERANJANG
+      </button>
+    </div>
+  </div>
+
+  <!-- TEMPLATE CETAK STRUK -->
+  <div id="section-to-print" class="hidden">
+    <div class="text-center font-black text-lg mb-0.5">KING KAUS KAKI</div>
+    <div class="text-center text-xs mb-1">Daftar Pesanan Grosir (Lusinan)</div>
+    <hr class="border-dashed border-black my-2">
+    <div class="text-xs mb-2 space-y-0.5">
+      <div>No. Order: <span id="bon-number">#0001</span></div>
+      <div>Tanggal: <span id="bon-date"></span></div>
+      <div>Pembeli: <span id="bon-customer-name">-</span></div>
+      <div>Tempat: <span id="bon-customer-place">-</span></div>
+    </div>
+    <hr class="border-dashed border-black my-2">
+    <table class="w-full text-xs text-left mb-2">
+      <thead>
+        <tr class="border-b">
+          <th>Nama Item & Ukuran</th>
+          <th class="text-right">Jumlah (Lsn)</th>
+        </tr>
+      </thead>
+      <tbody id="bon-items-body"></tbody>
+    </table>
+    <hr class="border-dashed border-black my-2">
+    <div class="flex justify-between font-bold text-sm">
+      <span>TOTAL LUSIN:</span>
+      <span id="bon-total-text">0 Lsn</span>
+    </div>
+    <hr class="border-dashed border-black my-2">
+    <div class="text-center text-xs mt-4">--- Terima Kasih atas Pesanan Anda ---</div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIKA APLIKASI -->
+  <script>
+    const WHATSAPP_NUMBER = "6285177406660"; 
+
+    const customerDatabase = [
+      { name: "A. SITORUS", place: "BINJAI" },
+      { name: "A2 SPORT", place: "SABUNGAN" },
+      { name: "A3 SPORT", place: "GEBANG" },
+      { name: "AAL KIDS", place: "LHOKSUKON" },
+      { name: "AAN", place: "BLANG PIDIE" },
+      { name: "AB PAKPAHAN", place: "PANGARIBUAN" },
+      { name: "ABADI JAYA", place: "RANTAU PRAPAT" },
+      { name: "ABAH FASHION", place: "PERANAP" },
+      { name: "ABANG ADEK", place: "KAPTEN MUSLIM" },
+      { name: "ABD", place: "SINABANG" },
+      { name: "ABDA", place: "KUALA SIMPANG" },
+      { name: "ABDI", place: "IDI" },
+      { name: "ABDUL", place: "TANJUNG MORAWA" },
+      { name: "ABDUL HALIM", place: "KUALA SIMPANG" },
+      { name: "ABDUL LATIF", place: "PASAR LINTONG ATAS" },
+      { name: "ABDUL SLAMET", place: "BAKONGAN" },
+      { name: "ABDULAH", place: "LOS" },
+      { name: "ABDULLAH", place: "M,B,O" },
+      { name: "ABDUR RAHMAN", place: "BANDA ACEH" },
+      { name: "ABEL", place: "DELI TUA" },
+      { name: "ABENG", place: "BAHOROK" },
+      { name: "ABENK", place: "MARELAN" },
+      { name: "ABI", place: "BULU CINA" },
+      { name: "ABI FASHION", place: "SINABANG" },
+      { name: "ABIB", place: "BATUBARA" },
+      { name: "ABID", place: "RIAU" },
+      { name: "ABIL", place: "AJAMU" },
+      { name: "ABIL KAOS KAKI", place: "BINJAI" }
+    ];
+
+    const categories = ["Semua", "BABY", "DWS KANTOR", "DWS KASUAL", "DWS MUSLIM", "SPORT", "HANDSOCK", "SEKOLAH", "SEPATU BAYI", "MASKER"];
+
+    const products = [
+     { 
+        id: 101, 
+        name: "FINI SEKOLAH T-HITAM", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/FINI_SEKOLAH_T-HITAM.png",
+        variants: [
+          { name: "Ukuran 15-16", img: "img/FINI_SEKOLAH_T-HITAM_15-16.png" },
+          { name: "Ukuran 17-18", img: "img/FINI_SEKOLAH_T-HITAM_17-18.png" },
+          { name: "Ukuran 19-20", img: "img/FINI_SEKOLAH_T-HITAM_19-20.png" },
+          { name: "Ukuran 21-22", img: "img/FINI_SEKOLAH_T-HITAM_21-22.png" },
+          { name: "Ukuran 25-26", img: "img/FINI_SEKOLAH_T-HITAM_25-26.png" }
+        ]
+      },
+      { 
+        id: 102, 
+        name: "FINI SEKOLAH HITAM", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/FINI_SEKOLAH_HITAM.png",
+        variants: [
+          { name: "Ukuran 15-16", img: "img/FINI_SEKOLAH_HITAM_15-16.png" },
+          { name: "Ukuran 17-18", img: "img/FINI_SEKOLAH_HITAM_17-18.png" },
+          { name: "Ukuran 19-20", img: "img/FINI_SEKOLAH_HITAM_19-20.png" },
+          { name: "Ukuran 21-22", img: "img/FINI_SEKOLAH_HITAM_21-22.png" },
+          { name: "Ukuran 25-26", img: "img/FINI_SEKOLAH_HITAM_25-26.png" }
+        ]
+      },
+      { 
+        id: 103, 
+        name: "FINI SEKOLAH PUTIH", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/FINI_SEKOLAH_PUTIH.png",
+        variants: [
+          { name: "Ukuran 15-16", img: "img/FINI_SEKOLAH_PUTIH_15-16.png" },
+          { name: "Ukuran 17-18", img: "img/FINI_SEKOLAH_PUTIH_17-18.png" },
+          { name: "Ukuran 19-20", img: "img/FINI_SEKOLAH_PUTIH_19-20.png" },
+          { name: "Ukuran 21-22", img: "img/FINI_SEKOLAH_PUTIH_21-22.png" },
+          { name: "Ukuran 25-26", img: "img/FINI_SEKOLAH_PUTIH_25-26.png" }
+        ]
+      },
+      { 
+        id: 104, 
+        name: "FINI PRAMUKA", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/FINI_PRAMUKA.png",
+        variants: [
+          { name: "Ukuran 17-18", img: "img/FINI_SEKOLAH_PRAMUKA_17-18.png" },
+          { name: "Ukuran 19-20", img: "img/FINI_SEKOLAH_PRAMUKA_19-20.png" },
+          { name: "Ukuran 21-22", img: "img/FINI_SEKOLAH_PRAMUKA_21-22.png" },
+          { name: "Ukuran 25-26", img: "img/FINI_SEKOLAH_PRAMUKA_25-26.png" }
+        ]
+      },
+    { 
+        id: 105, 
+        name: "YUTAKA T-HITAM", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/YUTAKA_T-HITAM.png",
+        variants: [
+          { name: "Ukuran 17-18", img: "img/YUTAKA_T-HITAM_17-18.png" },
+          { name: "Ukuran 19-20", img: "img/YUTAKA_T-HITAM_19-20.png" },
+          { name: "Ukuran 21-22", img: "img/YUTAKA_T-HITAM_21-22.png" },
+          { name: "Ukuran 25-26", img: "img/YUTAKA_T-HITAM_25-26.png" }
+        ]
+      },
+      { 
+        id: 106, 
+        name: "YUTAKA HITAM", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/YUTAKA_HITAM.png",
+        variants: [
+          { name: "Ukuran 17-18", img: "img/YUTAKA_HITAM_17-18.png" },
+          { name: "Ukuran 19-20", img: "img/YUTAKA_HITAM_19-20.png" },
+          { name: "Ukuran 21-22", img: "img/YUTAKA_HITAM_21-22.png" },
+          { name: "Ukuran 25-26", img: "img/YUTAKA_HITAM_25-26.png" }
+        ]
+      },
+      { 
+        id: 107, 
+        name: "YUTAKA PUTIH", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/YUTAKA_PUTIH.png",
+        variants: [
+          { name: "Ukuran 17-18", img: "img/YUTAKA_PUTIH_17-18.png" },
+          { name: "Ukuran 19-20", img: "img/YUTAKA_PUTIH_19-20.png" },
+          { name: "Ukuran 21-22", img: "img/YUTAKA_PUTIH_21-22.png" },
+          { name: "Ukuran 25-26", img: "img/YUTAKA_PUTIH_25-26.png" }
+        ]
+      },
+      { 
+        id: 108, 
+        name: "KAKIBRO T-HITAM", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/KAKIBRO_T-HITAM.png",
+        variants: [
+          { name: "Ukuran 17-18", img: "img/KAKIBRO_T-HITAM_17-18.png" },
+          { name: "Ukuran 19-20", img: "img/KAKIBRO_T-HITAM_19-20.png" },
+          { name: "Ukuran 21-22", img: "img/KAKIBRO_T-HITAM_21-22.png" },
+          { name: "Ukuran 25-26", img: "img/KAKIBRO_T-HITAM_25-26.png" }
+        ]
+      },
+      { 
+        id: 109, 
+        name: "KAKIBRO HITAM", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/KAKIBRO_HITAM.png",
+        variants: [
+          { name: "Ukuran 17-18", img: "img/KAKIBRO_HITAM_17-18.png" },
+          { name: "Ukuran 19-20", img: "img/KAKIBRO_HITAM_19-20.png" },
+          { name: "Ukuran 21-22", img: "img/KAKIBRO_HITAM_21-22.png" },
+          { name: "Ukuran 25-26", img: "img/KAKIBRO_HITAM_25-26.png" }
+        ]
+      },
+      { 
+        id: 110, 
+        name: "KAKIBRO PUTIH", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/KAKIBRO_PUTIH.png",
+        variants: [
+          { name: "Ukuran 17-18", img: "img/KAKIBRO_PUTIH_17-18.png" },
+          { name: "Ukuran 19-20", img: "img/KAKIBRO_PUTIH_19-20.png" },
+          { name: "Ukuran 21-22", img: "img/KAKIBRO_PUTIH_21-22.png" },
+          { name: "Ukuran 25-26", img: "img/KAKIBRO_PUTIH_25-26.png" }
+        ]
+      },
+      { 
+        id: 111, 
+        name: "BTS T-HITAM", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/BTS_T-HITAM.png",
+        variants: [
+          { name: "Ukuran SD", img: "img/BTS_T-HITAM_SD.png" },
+          { name: "Ukuran SMP", img: "img/BTS_T-HITAM_SMP.png" },
+          { name: "Ukuran SMU", img: "img/BTS_T-HITAM_SMU.png" },
+        ]
+      },
+      { 
+        id: 112, 
+        name: "BTS HITAM", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/BTS_HITAM.png",
+        variants: [
+          { name: "Ukuran SD", img: "img/BTS_HITAM_SD.png" },
+          { name: "Ukuran SMP", img: "img/BTS_HITAM_SMP.png" },
+          { name: "Ukuran SMU", img: "img/BTS_HITAM_SMU.png" },
+        ]
+      },
+      { 
+        id: 113, 
+        name: "PRAMUKA", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/PRAMUKA.png",
+        variants: [
+          { name: "Ukuran SD", img: "img/PRAMUKA_SD.png" },
+          { name: "Ukuran SMP", img: "img/PRAMUKA_SMP.png" },
+          { name: "Ukuran SMU", img: "img/PRAMUKA_SMU.png" },
+        ]
+      },
+      { 
+        id: 114, 
+        name: "FLEXIBALL", 
+        category: "SEKOLAH", 
+        isBestSeller: true, 
+        desc: "KAUS KAKI SEKOLAH, NYAMAN DIGUNAKAN, BERBAHAN POLY",
+        mainImg: "img/FLEXIBALL.png",
+        variants: [
+          { name: "Ukuran SD", img: "img/FLEXIBALL_SD.png" },
+          { name: "Ukuran SMP", img: "img/FLEXIBALL_SMP.png" },
+          { name: "Ukuran SMU", img: "img/FLEXIBALL_SMU.png" },
+        ]
+      },
+    ];
+
+    let cart = [];
+    let currentCategory = "Semua";
+    let currentCustomer = { name: "Umum", place: "-" };
+    let activeProductForDetail = null;
+    let selectedMotifObj = null;
+    let modalVariantQuantities = {}; 
+    let transactions = JSON.parse(localStorage.getItem('pos_transactions')) || [];
+
+    window.onload = function() {
+      populateCustomerDatalist();
+    };
+
+    function populateCustomerDatalist() {
+      const nameDatalist = document.getElementById('customer-list');
+      const placeDatalist = document.getElementById('place-list');
+
+      const uniqueNames = [...new Set(customerDatabase.map(c => c.name))];
+      const uniquePlaces = [...new Set(customerDatabase.map(c => c.place))];
+
+      nameDatalist.innerHTML = uniqueNames.map(name => `<option value="${name}">`).join('');
+      placeDatalist.innerHTML = uniquePlaces.map(place => `<option value="${place}">`).join('');
+    }
+
+    function autoFillAddress() {
+      const inputName = document.getElementById('input-customer-name').value.trim().toUpperCase();
+      const matched = customerDatabase.find(c => c.name.toUpperCase() === inputName);
+      if (matched) {
+        document.getElementById('input-customer-place').value = matched.place;
+      }
+    }
+
+    function openCustomerModal() {
+      document.getElementById('customer-modal').classList.remove('hidden');
+    }
+
+    function startPosSession() {
+      let name = document.getElementById('input-customer-name').value.trim();
+      let place = document.getElementById('input-customer-place').value.trim();
+
+      if (!name || !place) {
+        alert("Harap isi Nama Pemesan dan Tempat/Tujuan terlebih dahulu!");
+        return;
+      }
+
+      currentCustomer = { name: name.toUpperCase(), place: place.toUpperCase() };
+      document.getElementById('display-customer-info').innerText = `${currentCustomer.name} (${currentCustomer.place})`;
+      document.getElementById('active-customer-badge').innerText = `Pemesan: ${currentCustomer.name} - ${currentCustomer.place}`;
+      
+      document.getElementById('customer-modal').classList.add('hidden');
+      document.getElementById('welcome-screen').style.display = 'none';
+
+      renderCategories();
+      renderBestSellers();
+      renderProducts();
+    }
+
+    function backToWelcome() {
+      document.getElementById('welcome-screen').style.display = 'flex';
+    }
+
+    // SISTEM TAB / PINDAH MENU UTAMA
+    function switchTab(tab) {
+      document.getElementById('view-kasir').style.display = 'none';
+      document.getElementById('view-keranjang').style.display = 'none';
+      document.getElementById('view-laporan').style.display = 'none';
+
+      document.getElementById('tab-kasir').className = 'px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-800 hover:bg-blue-700 transition';
+      document.getElementById('tab-keranjang').className = 'px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-800 hover:bg-blue-700 transition relative';
+      document.getElementById('tab-laporan').className = 'px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-800 hover:bg-blue-700 transition';
+
+      if (tab === 'kasir') {
+        document.getElementById('view-kasir').style.display = 'flex';
+        document.getElementById('tab-kasir').className = 'px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-700 shadow transition';
+      } else if (tab === 'keranjang') {
+        document.getElementById('view-keranjang').style.display = 'block';
+        document.getElementById('tab-keranjang').className = 'px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-700 shadow transition relative';
+        renderCartPage();
+      } else if (tab === 'laporan') {
+        document.getElementById('view-laporan').style.display = 'block';
+        document.getElementById('tab-laporan').className = 'px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-700 shadow transition';
+        renderTransactionsTable();
+      }
+    }
+
+    function renderCategories() {
+      const categoryBar = document.getElementById('category-bar');
+      categoryBar.innerHTML = categories.map(cat => `
+        <button onclick="filterCategory('${cat}')" 
+          class="px-4 py-2 rounded-lg font-semibold text-sm transition shrink-0 ${currentCategory === cat ? 'bg-blue-800 text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">
+          ${cat}
+        </button>
+      `).join('');
+    }
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      renderCategories();
+      renderProducts();
+    }
+
+    function getProductOrderedTotal(productId) {
+      return cart
+        .filter(item => item.productId === productId)
+        .reduce((sum, item) => sum + item.qty, 0);
+    }
+
+    function renderBestSellers() {
+      const slider = document.getElementById('best-seller-slider');
+      const bestSellerProducts = products.filter(p => p.isBestSeller);
+
+      slider.innerHTML = bestSellerProducts.map(p => {
+        const orderedTotal = getProductOrderedTotal(p.id);
+        return `
+          <div onclick="openProductDetail(${p.id})" class="bg-white rounded-2xl p-3 shadow-sm border border-amber-200 hover:border-amber-400 transition-all cursor-pointer flex flex-col justify-between shrink-0 w-44 relative group">
+            ${orderedTotal > 0 ? `<span class="absolute top-2 right-2 bg-blue-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow z-10">${orderedTotal} Lsn</span>` : ''}
+            
+            <div class="relative w-full h-32 bg-white rounded-xl p-1 flex items-center justify-center overflow-hidden border border-slate-100">
+              <img src="${p.mainImg}" onerror="this.src='https://via.placeholder.com/150?text=${encodeURIComponent(p.name)}'" class="w-full h-full object-contain rounded-lg transition-transform duration-300 group-hover:scale-105">
+              <span class="absolute top-1 left-1 bg-amber-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow">★ Best Seller</span>
+            </div>
+
+            <div class="pt-2 text-center">
+              <h4 class="font-bold text-xs text-slate-800 truncate">${p.name}</h4>
+              <span class="text-[11px] ${orderedTotal > 0 ? 'text-emerald-700 font-extrabold' : 'text-blue-600 font-bold'}">
+                ${orderedTotal > 0 ? `✔ Dipesan: ${orderedTotal} Lsn` : '🔍 Pilih Varian'}
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      const keyword = document.getElementById('search-input').value.toLowerCase();
+
+      let filtered = products;
+      if (currentCategory !== "Semua") {
+        filtered = products.filter(p => p.category === currentCategory);
+      }
+
+      if (keyword) {
+        filtered = filtered.filter(p => p.name.toLowerCase().includes(keyword));
+      }
+
+      grid.innerHTML = filtered.map(p => {
+        const orderedTotal = getProductOrderedTotal(p.id);
+        return `
+          <div onclick="openProductDetail(${p.id})" class="bg-white rounded-[2rem] p-3 shadow-sm border border-slate-200/80 hover:shadow-md hover:border-blue-300 transition-all cursor-pointer flex flex-col justify-between relative group">
+            ${orderedTotal > 0 ? `<span class="absolute top-4 right-4 bg-blue-600 text-white text-[11px] font-black px-2.5 py-1 rounded-full shadow-md z-10">${orderedTotal} Lsn</span>` : ''}
+            
+            <div class="relative w-full h-36 sm:h-40 bg-white rounded-[1.5rem] p-2 flex items-center justify-center overflow-hidden border border-slate-100">
+              <img src="${p.mainImg}" onerror="this.src='https://via.placeholder.com/200x150?text=${encodeURIComponent(p.name)}'" class="w-full h-full object-contain rounded-xl transition-transform duration-300 group-hover:scale-105">
+              ${p.isBestSeller ? '<span class="absolute top-2 left-2 bg-amber-500/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">★ Best Seller</span>' : ''}
+            </div>
+
+            <div class="pt-3 pb-1 text-center flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="font-bold text-xs md:text-sm text-slate-800 line-clamp-2">${p.name}</h3>
+                <span class="inline-block bg-blue-50 text-blue-600 text-[10px] px-2.5 py-0.5 rounded-full font-bold mt-1.5">${p.category}</span>
+              </div>
+              <div class="mt-3">
+                <span class="text-xs ${orderedTotal > 0 ? 'text-emerald-700 font-extrabold' : 'text-blue-600 font-bold'} hover:underline">
+                  ${orderedTotal > 0 ? `✔ Dipesan: ${orderedTotal} Lsn` : '🔍 Pilih Varian'}
+                </span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openProductDetail(productId) {
+      activeProductForDetail = products.find(p => p.id === productId);
+      if (!activeProductForDetail) return;
+
+      document.getElementById('detail-modal-img').src = activeProductForDetail.mainImg;
+      document.getElementById('detail-modal-title').innerText = activeProductForDetail.name;
+      document.getElementById('detail-modal-cat').innerText = activeProductForDetail.category;
+      document.getElementById('detail-modal-desc').innerText = activeProductForDetail.desc;
+
+      modalVariantQuantities = {};
+      cart.filter(item => item.productId === activeProductForDetail.id).forEach(item => {
+        modalVariantQuantities[item.fullVariantKey] = item.qty;
+      });
+
+      selectedMotifObj = null;
+      renderModalMainView();
+      document.getElementById('product-detail-modal').classList.remove('hidden');
+    }
+
+    function renderModalMainView() {
+      const hasSubVariants = activeProductForDetail.variants.some(v => v.subVariants && v.subVariants.length > 0);
+
+      if (hasSubVariants && !selectedMotifObj) {
+        renderMotifSelectionList();
+      } else {
+        renderSizeSelectionList();
+      }
+    }
+
+    function renderMotifSelectionList() {
+      document.getElementById('modal-section-title').innerText = "Langkah 1: Klik untuk Pilih Motif";
+      document.getElementById('btn-back-to-motifs').classList.add('hidden');
+
+      const container = document.getElementById('detail-modal-variants');
+      container.innerHTML = activeProductForDetail.variants.map((v, idx) => `
+        <div 
+          onclick="selectMotifToChooseSize(${idx})" 
+          class="p-3 rounded-2xl border bg-slate-50 hover:bg-blue-50 hover:border-blue-500 transition flex items-center justify-between cursor-pointer select-none">
+          
+          <div class="flex items-center gap-3">
+            <img src="${v.img}" onerror="this.src='https://via.placeholder.com/40'" class="w-10 h-10 object-contain rounded-xl border bg-white p-0.5">
+            <div>
+              <span class="font-bold text-xs text-slate-800 block">${v.name}</span>
+              <span class="text-[10px] text-blue-600 font-semibold">Klik untuk memilih Ukuran (S, M, L) ➔</span>
+            </div>
+          </div>
+          <span class="text-xs text-blue-600 font-bold">Pilih ➔</span>
+        </div>
+      `).join('');
+    }
+
+    function selectMotifToChooseSize(variantIndex) {
+      selectedMotifObj = activeProductForDetail.variants[variantIndex];
+      document.getElementById('detail-modal-img').src = selectedMotifObj.img;
+      renderSizeSelectionList();
+    }
+
+    function backToMotifSelection() {
+      selectedMotifObj = null;
+      document.getElementById('detail-modal-img').src = activeProductForDetail.mainImg;
+      renderModalMainView();
+    }
+
+    function renderSizeSelectionList() {
+      const container = document.getElementById('detail-modal-variants');
+      
+      if (selectedMotifObj) {
+        document.getElementById('modal-section-title').innerText = `Motif: ${selectedMotifObj.name} (Tentukan Ukuran):`;
+        document.getElementById('btn-back-to-motifs').classList.remove('hidden');
+
+        container.innerHTML = selectedMotifObj.subVariants.map(sizeName => {
+          const fullKey = `${selectedMotifObj.name} - ${sizeName}`;
+          const qty = modalVariantQuantities[fullKey] || 0;
+          const isSelected = qty > 0;
+
+          return `
+            <div 
+              onclick="toggleVariantSelection('${fullKey}', '${selectedMotifObj.img}')" 
+              class="p-3 rounded-2xl border transition flex items-center justify-between cursor-pointer select-none ${isSelected ? 'bg-blue-50 border-blue-600 shadow-sm' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}">
+              
+              <div class="flex items-center gap-2">
+                <span class="font-black text-xs ${isSelected ? 'text-blue-900' : 'text-slate-800'}">${sizeName}</span>
+                <span class="text-[10px] ${isSelected ? 'text-blue-600 font-bold' : 'text-slate-400'}">
+                  ${isSelected ? '✔ Terpilih' : 'Sentuh untuk memilih'}
+                </span>
+              </div>
+
+              <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+                <button onclick="changeModalVariantQty('${fullKey}', -1, '${selectedMotifObj.img}')" class="w-7 h-7 bg-white border font-extrabold text-slate-700 rounded-lg hover:bg-slate-200 active:scale-95 text-xs flex items-center justify-center shadow-sm">-</button>
+                <span class="w-8 text-center text-xs font-black text-blue-800">${qty} Lsn</span>
+                <button onclick="changeModalVariantQty('${fullKey}', 1, '${selectedMotifObj.img}')" class="w-7 h-7 bg-blue-600 font-extrabold text-white rounded-lg hover:bg-blue-700 active:scale-95 text-xs flex items-center justify-center shadow-sm">+</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } else {
+        document.getElementById('modal-section-title').innerText = "Pilih Ukuran / Varian:";
+        document.getElementById('btn-back-to-motifs').classList.add('hidden');
+
+        container.innerHTML = activeProductForDetail.variants.map(v => {
+          const fullKey = v.name;
+          const qty = modalVariantQuantities[fullKey] || 0;
+          const isSelected = qty > 0;
+
+          return `
+            <div 
+              onclick="toggleVariantSelection('${fullKey}', '${v.img}')" 
+              class="p-3 rounded-2xl border transition flex items-center justify-between cursor-pointer select-none ${isSelected ? 'bg-blue-50 border-blue-600 shadow-sm' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}">
+              
+              <div class="flex items-center gap-3">
+                <img src="${v.img}" onerror="this.src='https://via.placeholder.com/40'" class="w-10 h-10 object-contain rounded-xl border bg-white p-0.5">
+                <div>
+                  <span class="font-bold text-xs block ${isSelected ? 'text-blue-900' : 'text-slate-800'}">${v.name}</span>
+                  <span class="text-[10px] ${isSelected ? 'text-blue-600 font-bold' : 'text-slate-400'}">
+                    ${isSelected ? '✔ Terpilih' : 'Sentuh untuk memilih'}
+                  </span>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+                <button onclick="changeModalVariantQty('${fullKey}', -1, '${v.img}')" class="w-7 h-7 bg-white border font-extrabold text-slate-700 rounded-lg hover:bg-slate-200 active:scale-95 text-xs flex items-center justify-center shadow-sm">-</button>
+                <span class="w-8 text-center text-xs font-black text-blue-800">${qty} Lsn</span>
+                <button onclick="changeModalVariantQty('${fullKey}', 1, '${v.img}')" class="w-7 h-7 bg-blue-600 font-extrabold text-white rounded-lg hover:bg-blue-700 active:scale-95 text-xs flex items-center justify-center shadow-sm">+</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function toggleVariantSelection(fullKey, img) {
+      if (img) document.getElementById('detail-modal-img').src = img;
+      
+      const currentQty = modalVariantQuantities[fullKey] || 0;
+      modalVariantQuantities[fullKey] = currentQty > 0 ? 0 : 1;
+      renderSizeSelectionList();
+    }
+
+    function changeModalVariantQty(fullKey, delta, img) {
+      if (img) document.getElementById('detail-modal-img').src = img;
+
+      let current = modalVariantQuantities[fullKey] || 0;
+      current += delta;
+      if (current < 0) current = 0;
+      modalVariantQuantities[fullKey] = current;
+      renderSizeSelectionList();
+    }
+
+    function saveMultipleVariantsToCart() {
+      if (!activeProductForDetail) return;
+
+      cart = cart.filter(item => item.productId !== activeProductForDetail.id);
+
+      Object.keys(modalVariantQuantities).forEach(fullKey => {
+        const qty = modalVariantQuantities[fullKey];
+        if (qty > 0) {
+          const cartItemId = `${activeProductForDetail.id}-${fullKey}`;
+          cart.push({
+            cartItemId: cartItemId,
+            productId: activeProductForDetail.id,
+            fullVariantKey: fullKey,
+            name: `${activeProductForDetail.name} (${fullKey})`,
+            category: activeProductForDetail.category,
+            img: activeProductForDetail.mainImg,
+            qty: qty
+          });
+        }
+      });
+
+      closeProductModal();
+      updateCartBadge();
+      renderProducts();
+      renderBestSellers();
+    }
+
+    function closeProductModal() {
+      document.getElementById('product-detail-modal').classList.add('hidden');
+    }
+
+    function updateQty(cartItemId, delta) {
+      const item = cart.find(i => i.cartItemId === cartItemId);
+      if (item) {
+        item.qty += delta;
+        if (item.qty <= 0) cart = cart.filter(i => i.cartItemId !== cartItemId);
+      }
+      updateCartBadge();
+      renderCartPage();
+      renderProducts();
+      renderBestSellers();
+    }
+
+    function clearCart() {
+      cart = [];
+      updateCartBadge();
+      renderCartPage();
+      renderProducts();
+      renderBestSellers();
+    }
+
+    function updateCartBadge() {
+      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-badge-count').innerText = totalItems;
+    }
+
+    function renderCartPage() {
+      const cartContainer = document.getElementById('cart-items-page');
+      if (cart.length === 0) {
+        cartContainer.innerHTML = `<p class="text-center text-slate-400 py-10 text-sm">Belum ada barang dipilih.<br>Silakan pilih produk terlebih dahulu di menu Katalog.</p>`;
+        document.getElementById('total-items-count-page').innerText = "0 Jenis";
+        document.getElementById('total-qty-count-page').innerText = "0 Lusin";
+        return;
+      }
+
+      let totalQty = 0;
+      cartContainer.innerHTML = cart.map(item => {
+        totalQty += item.qty;
+        return `
+          <div class="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-200">
+            <img src="${item.img}" onerror="this.src='https://via.placeholder.com/50'" class="w-12 h-12 object-contain rounded-xl bg-white border p-0.5 mr-3">
+            <div class="flex-1 pr-2">
+              <h4 class="font-bold text-xs sm:text-sm text-slate-800">${item.name}</h4>
+              <p class="text-[10px] text-blue-600 font-semibold">${item.category}</p>
+            </div>
+            <div class="flex items-center gap-1.5 bg-white border rounded-xl p-1 shadow-sm">
+              <button onclick="updateQty('${item.cartItemId}', -1)" class="w-7 h-7 bg-slate-100 font-bold text-slate-700 rounded-lg hover:bg-slate-200">-</button>
+              <span class="w-8 text-center text-xs font-black text-blue-800">${item.qty} Lsn</span>
+              <button onclick="updateQty('${item.cartItemId}', 1)" class="w-7 h-7 bg-blue-600 font-bold text-white rounded-lg hover:bg-blue-700">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('total-items-count-page').innerText = cart.length + " Jenis";
+      document.getElementById('total-qty-count-page').innerText = totalQty + " Lusin";
+    }
+
+    async function generateWordDocument() {
+      if (cart.length === 0) {
+        alert("Daftar pesanan masih kosong!");
+        return;
+      }
+
+      const bonNumber = "#ORD-" + Math.floor(1000 + Math.random() * 9000);
+      const timeString = new Date().toLocaleString('id-ID');
+      let totalLusin = cart.reduce((s, i) => s + i.qty, 0);
+
+      const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType } = window.docx;
+
+      const tableRows = [
+        new TableRow({
+          children: [
+            new TableCell({
+              children: [new Paragraph({ children: [new TextRun({ text: "No.", bold: true, color: "FFFFFF" })] })],
+              shading: { fill: "1E3A8A" },
+              width: { size: 10, type: WidthType.PERCENTAGE }
+            }),
+            new TableCell({
+              children: [new Paragraph({ children: [new TextRun({ text: "Nama Produk & Varian", bold: true, color: "FFFFFF" })] })],
+              shading: { fill: "1E3A8A" },
+              width: { size: 65, type: WidthType.PERCENTAGE }
+            }),
+            new TableCell({
+              children: [new Paragraph({ children: [new TextRun({ text: "Jumlah (Lusin)", bold: true, color: "FFFFFF" })], alignment: AlignmentType.RIGHT })],
+              shading: { fill: "1E3A8A" },
+              width: { size: 25, type: WidthType.PERCENTAGE }
+            })
+          ]
+        })
+      ];
+
+      cart.forEach((item, index) => {
+        tableRows.push(
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph(`${index + 1}`)] }),
+              new TableCell({ children: [new Paragraph(`${item.name}`)] }),
+              new TableCell({ children: [new Paragraph({ text: `${item.qty} Lusin`, alignment: AlignmentType.RIGHT })] })
+            ]
+          })
+        );
+      });
+
+      tableRows.push(
+        new TableRow({
+          children: [
+            new TableCell({
+              children: [new Paragraph({ children: [new TextRun({ text: "TOTAL PESANAN", bold: true })] })],
+              columnSpan: 2,
+              shading: { fill: "F1F5F9" }
+            }),
+            new TableCell({
+              children: [new Paragraph({ children: [new TextRun({ text: `${totalLusin} Lusin`, bold: true })], alignment: AlignmentType.RIGHT })],
+              shading: { fill: "F1F5F9" }
+            })
+          ]
+        })
+      );
+
+      const doc = new Document({
+        sections: [{
+          properties: {},
+          children: [
+            new Paragraph({
+              children: [new TextRun({ text: "KING KAUS KAKI", bold: true, size: 36, color: "1E3A8A" })],
+              alignment: AlignmentType.CENTER
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: "SURAT PESANAN GROSIR (BON LUSINAN)", italics: true, size: 20, color: "64748B" })],
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 300 }
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "No. Order   : ", bold: true }), new TextRun(bonNumber), TextRun.break(),
+                new TextRun({ text: "Tanggal      : ", bold: true }), new TextRun(timeString), TextRun.break(),
+                new TextRun({ text: "Pemesan    : ", bold: true }), new TextRun(currentCustomer.name), TextRun.break(),
+                new TextRun({ text: "Tujuan/Kota : ", bold: true }), new TextRun(currentCustomer.place)
+              ],
+              spacing: { after: 300 }
+            }),
+            new Table({
+              rows: tableRows,
+              width: { size: 100, type: WidthType.PERCENTAGE }
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: "Terima kasih atas kepercayaan Anda memesan di KING KAUS KAKI.", italics: true, size: 18 })],
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 400 }
+            })
+          ]
+        }]
+      });
+
+      const blob = await Packer.toBlob(doc);
+      saveAs(blob, `Bon_Order_${currentCustomer.name}_${bonNumber}.docx`);
+
+      saveTransaction(bonNumber, timeString, totalLusin);
+    }
+
+    function processOrderWA() {
+      if (cart.length === 0) {
+        alert("Daftar pesanan masih kosong!");
+        return;
+      }
+
+      const bonNumber = "#ORD-" + Math.floor(1000 + Math.random() * 9000);
+      const timeString = new Date().toLocaleString('id-ID');
+
+      let message = `*PESANAN BARU - KING KAUS KAKI*\n`;
+      message += `-----------------------------------\n`;
+      message += `No. Order: *${bonNumber}*\n`;
+      message += `Waktu: ${timeString}\n`;
+      message += `Pemesan: *${currentCustomer.name}*\n`;
+      message += `Tempat: *${currentCustomer.place}*\n`;
+      message += `-----------------------------------\n`;
+      message += `*DAFTAR BARANG, MOTIF & UKURAN (LUSIN):*\n`;
+
+      let totalLusin = 0;
+      cart.forEach((item, idx) => {
+        message += `${idx + 1}. *${item.name}* = ${item.qty} Lusin\n`;
+        totalLusin += item.qty;
+      });
+
+      message += `-----------------------------------\n`;
+      message += `*TOTAL KUANTITAS: ${totalLusin} LUSIN*\n`;
+
+      saveTransaction(bonNumber, timeString, totalLusin);
+
+      const encodedUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+      window.open(encodedUrl, '_blank');
+
+      clearCart();
+      switchTab('kasir');
+    }
+
+    function processOrderPrint() {
+      if (cart.length === 0) {
+        alert("Daftar pesanan masih kosong!");
+        return;
+      }
+
+      const bonNumber = "#ORD-" + Math.floor(1000 + Math.random() * 9000);
+      const timeString = new Date().toLocaleString('id-ID');
+      let totalLusin = cart.reduce((s, i) => s + i.qty, 0);
+
+      saveTransaction(bonNumber, timeString, totalLusin);
+
+      document.getElementById('bon-number').innerText = bonNumber;
+      document.getElementById('bon-date').innerText = timeString;
+      document.getElementById('bon-customer-name').innerText = currentCustomer.name;
+      document.getElementById('bon-customer-place').innerText = currentCustomer.place;
+
+      document.getElementById('bon-items-body').innerHTML = cart.map(item => `
+        <tr>
+          <td class="py-1">${item.name}</td>
+          <td class="text-right font-bold">${item.qty} Lsn</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('bon-total-text').innerText = totalLusin + " Lusin";
+      window.print();
+
+      setTimeout(() => { 
+        clearCart(); 
+        switchTab('kasir');
+      }, 1000);
+    }
+
+    function saveTransaction(bonNumber, timeString, totalLusin) {
+      transactions.unshift({ 
+        id: bonNumber, 
+        date: timeString, 
+        customerName: currentCustomer.name, 
+        customerPlace: currentCustomer.place, 
+        items: [...cart], 
+        totalLusin: totalLusin 
+      });
+      localStorage.setItem('pos_transactions', JSON.stringify(transactions));
+    }
+
+    function renderTransactionsTable() {
+      const tbody = document.getElementById('transactions-table-body');
+      if (transactions.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Belum ada riwayat pesanan.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = transactions.map(t => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-bold text-blue-800">${t.id}</td>
+          <td class="p-3 text-slate-500">${t.date}</td>
+          <td class="p-3 font-semibold text-slate-800">${t.customerName} <span class="text-slate-400 font-normal">(${t.customerPlace})</span></td>
+          <td class="p-3 text-center font-bold text-blue-600">${t.totalLusin} Lusin</td>
+          <td class="p-3 text-center">
+            <button onclick="showBonDetail('${t.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded font-semibold text-[11px]">Lihat Detail</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function showBonDetail(bonId) {
+      const tx = transactions.find(t => t.id === bonId);
+      if (!tx) return;
+
+      document.getElementById('detail-bon-title').innerText = `Rincian Order: ${tx.id} — ${tx.customerName} (${tx.customerPlace})`;
+      document.getElementById('detail-bon-date').innerText = `Waktu: ${tx.date}`;
+
+      document.getElementById('detail-bon-body').innerHTML = tx.items.map(item => `
+        <tr>
+          <td class="p-2.5"><img src="${item.img}" onerror="this.src='https://via.placeholder.com/40'" class="w-8 h-8 object-contain rounded border"></td>
+          <td class="p-2.5 font-bold text-slate-800">${item.name}</td>
+          <td class="p-2.5 text-center font-bold text-blue-600">${item.qty} Lusin</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('bon-detail-card').style.display = 'block';
+    }
+
+    function clearAllTransactions() {
+      if (confirm("Hapus semua riwayat transaksi?")) {
+        transactions = [];
+        localStorage.removeItem('pos_transactions');
+        renderTransactionsTable();
+        document.getElementById('bon-detail-card').style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
